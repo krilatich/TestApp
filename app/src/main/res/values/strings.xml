@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TestApp</string>
+    <string name="home_screen_route">Главная</string>
+    <string name="basket_screen_route">Корзина</string>
+    <string name="search_screen_route">Поиск</string>
+    <string name="account_screen_route">Аккаунт</string>
+</resources>
