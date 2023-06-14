@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.domain.models.Dish
 
-@Database(entities = [Dish::class], version = 1)
+@Database(entities = [Dish::class], version = 1, exportSchema = true)
 abstract class BasketDatabase : RoomDatabase() {
     abstract fun basketDao(): BasketDao
 

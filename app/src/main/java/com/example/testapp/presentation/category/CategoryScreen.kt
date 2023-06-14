@@ -9,13 +9,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,16 +36,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.domain.models.Dish
-import com.example.testapp.R
 import com.example.testapp.presentation.components.BottomNavigationBar
-import com.example.testapp.presentation.theme.cardBackground
+import com.example.testapp.presentation.components.CategoryTopBar
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,6 +84,7 @@ fun CategoryScreen(
                 modifier = Modifier
                     .alpha(0.5f)
                     .fillMaxSize()
+                    .padding(paddingValues = it)
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -99,15 +103,14 @@ fun CategoryScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-        if (dishDialogState.value.isOpen)
-            DishDialog(
-                dishDialogState.value.dish!!,
-                onDishDialogDismiss = { categoryViewModel.onDishDialogDismiss() },
-                onAddDishClicked = { categoryViewModel.onAddDishClicked(dishDialogState.value.dish!!) },
-                isAdded = dishDialogState.value.isAdded
-            )
-
     }
+    if (dishDialogState.value.isOpen)
+        DishDialog(
+            dishDialogState.value.dish,
+            onDishDialogDismiss = { categoryViewModel.onDishDialogDismiss() },
+            onAddDishClicked = { categoryViewModel.onAddDishClicked(dishDialogState.value.dish) },
+            isAdded = dishDialogState.value.isAdded
+        )
 }
 
 @Composable
@@ -143,105 +146,100 @@ fun DishDialog(
     onDishDialogDismiss: () -> Unit,
     isAdded: Boolean
 ) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .alpha(0.5f)
-    ) {
-        Card(Modifier.align(Alignment.Center)) {
-            Column(Modifier.padding(16.dp)) {
-                Image(
-                    rememberAsyncImagePainter(model = dish.image_url),
-                    contentDescription = dish.name,
-                    contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                )
+    Box {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(Color.White.copy(alpha = 0.5f))
+                .clickable(onClick = onDishDialogDismiss)
+        )
+        Box(
+            Modifier
+                .align(Alignment.Center)
+                .padding(20.dp)
+                .background(Color.White, RoundedCornerShape(15.dp))
+        ) {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            MaterialTheme.colorScheme.surfaceVariant,
+                            RoundedCornerShape(10.dp)
+                        )
+                ) {
+                    Image(
+                        rememberAsyncImagePainter(model = dish.image_url),
+                        contentDescription = dish.name,
+                        modifier = Modifier
+                            .size(200.dp)
+                            .align(Alignment.Center)
+                    )
+                }
                 Text(dish.name)
-                Row() {
+                Row {
                     Text(dish.price.toString() + " ₽ ")
                     Text(
                         "· " + dish.weight.toString() + "г",
                         color = Color.Gray
                     )
                 }
-                Text(dish.description)
+                Text(dish.description, style = MaterialTheme.typography.bodySmall)
                 Button(
-                    onClick = { onAddDishClicked() }, modifier = Modifier
+                    onClick = {
+                        if (!isAdded)
+                            onAddDishClicked()
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
                 ) {
                     if (isAdded)
-                        Text("Добавлено в корзину")
+                        Text("Добавлено в корзину", color = Color.Green)
                     else
                         Text("Добавить в корзину")
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun CategoryTopBar(
-    categoryName: String,
-    onBackButtonClick: () -> Unit,
-    chosenTag: String,
-    tags: List<String>,
-    onTagClick: (String) -> Unit
-) {
-    Column() {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Icon(
-                painterResource(id = R.drawable.back_button),
-                contentDescription = "back_button",
-                modifier = Modifier.clickable(onClick = onBackButtonClick)
-            )
-            Text(categoryName, style = MaterialTheme.typography.bodyLarge)
-            Image(
-                painter = painterResource(id = R.drawable.avatar),
-                contentDescription = "avatar",
+            Row(
                 modifier = Modifier
-                    .size(44.dp)
-            )
-        }
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(start = 20.dp)
-        ) {
-            items(tags.size) {
-                if (chosenTag == tags[it])
-                    Text(
-                        tags[it], modifier = Modifier
-                            .background(Color.Blue, RoundedCornerShape(10.dp))
-                            .padding(
-                                top = 10.dp,
-                                bottom = 10.dp,
-                                start = 16.dp,
-                                end = 16.dp
-                            )
-                            .clickable {
-                                onTagClick(tags[it])
-                            }, color = Color.White
+                    .align(Alignment.TopEnd)
+                    .padding(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    Modifier
+                        .background(Color.White, RoundedCornerShape(8.dp))
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Favorite,
+                        contentDescription = "addToFavorites",
+                        modifier = Modifier
+                            .clickable(onClick = { })
+                            .align(Alignment.Center)
+                            .size(15.dp)
                     )
-                else
-                    Text(
-                        tags[it], modifier = Modifier
-                            .background(cardBackground, RoundedCornerShape(10.dp))
-                            .padding(
-                                top = 10.dp,
-                                bottom = 10.dp,
-                                start = 16.dp,
-                                end = 16.dp
-                            )
-
-                            .clickable {
-                                onTagClick(tags[it])
-                            }, color = Color.Black
+                }
+                Box(
+                    Modifier
+                        .background(Color.White, RoundedCornerShape(8.dp))
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "closeDialog",
+                        modifier = Modifier
+                            .clickable(onClick = onDishDialogDismiss)
+                            .align(Alignment.Center)
+                            .size(15.dp)
                     )
+                }
             }
         }
     }

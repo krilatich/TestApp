@@ -10,12 +10,15 @@ interface BasketDao {
 
     @Query("SELECT * FROM dish")
     fun getDishes(): Flow<List<Dish>>
-/*
-    @Query("SELECT * FROM dish WHERE id = :id")
-    suspend fun getNoteById(id: Int): Dish?
-*/
+
+    @Query("SELECT COUNT() FROM dish WHERE id = :id")
+    suspend fun checkDish(id: Int): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDish(dish: Dish)
+
+    @Update
+    suspend fun updateDish(dish: Dish)
 
     @Delete
     suspend fun deleteDish(dish: Dish)

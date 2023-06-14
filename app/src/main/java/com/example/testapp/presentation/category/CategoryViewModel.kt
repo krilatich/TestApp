@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.models.Dish
 import com.example.domain.models.Resource
 import com.example.domain.usecase.AddDishToBasketUseCase
+import com.example.domain.usecase.CheckDishIsAddedUseCase
 import com.example.domain.usecase.GetDishesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +15,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 
 class CategoryViewModel(
     private val getDishesUseCase: GetDishesUseCase,
     private val addDishToBasketUseCase: AddDishToBasketUseCase,
+    private val checkDishIsAdded: CheckDishIsAddedUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(CategoryState())
@@ -70,38 +73,35 @@ class CategoryViewModel(
         _dishDialogState.update {
             it.copy(
                 isOpen = true,
-                dish = dish
+                dish = dish,
+                isLoading = true
             )
+        }
+        viewModelScope.launch {
+            _dishDialogState.update {
+                it.copy(
+                    isAdded = checkDishIsAdded(dish.id),
+                    isLoading = false
+                )
+            }
         }
     }
 
     fun onAddDishClicked(dish: Dish) {
-        addDishToBasketUseCase(dish).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _dishDialogState.update {
-                        it.copy(
-                            isAdded = true
-                        )
-                    }
-                }
-
-                is Resource.Error -> {
-                    _state.value = CategoryState(
-                        error = result.message ?: "An unexpected error occured"
-                    )
-                }
-
-                is Resource.Loading -> {
-                    _dishDialogState.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
+        viewModelScope.launch {
+            _dishDialogState.update {
+                it.copy(
+                    isLoading = true
+                )
             }
-        }.launchIn(viewModelScope)
-        // Continue with executing the confirmed action
+            addDishToBasketUseCase(dish)
+            _dishDialogState.update {
+                it.copy(
+                    isAdded = true,
+                    isLoading = false
+                )
+            }
+        }
     }
 
     fun onDishDialogDismiss() {

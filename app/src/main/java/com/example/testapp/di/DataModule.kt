@@ -1,7 +1,6 @@
 package com.example.testapp.di
 
 import com.example.data.api.TestAppApi
-import com.example.data.data_source.BasketDao
 import com.example.data.data_source.BasketDatabase
 import com.example.data.repository.BasketRepositoryImpl
 import com.example.data.repository.CategoriesRepositoryImpl
@@ -23,20 +22,15 @@ val dataModule = module {
             .create(TestAppApi::class.java)
     }
 
-    single<BasketRepository> {
-        BasketRepositoryImpl(get())
-    }
-
-    single <BasketDao> {
+    single {
         get<BasketDatabase>().basketDao()
     }
 
     single { BasketDatabase.getInstance(get()) }
 
-    single { get<BasketDatabase>().basketDao() }
-
-
-
+    single<BasketRepository> {
+        BasketRepositoryImpl(get())
+    }
 
     single<DishesRepository> {
         DishesRepositoryImpl(get())
