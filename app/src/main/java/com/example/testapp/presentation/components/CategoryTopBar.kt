@@ -71,7 +71,9 @@ fun CategoryTopBar(
                             )
                             .clickable {
                                 onTagClick(tags[it])
-                            }, color = Color.White
+                            },
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 else
                     Text(
@@ -89,7 +91,9 @@ fun CategoryTopBar(
 
                             .clickable {
                                 onTagClick(tags[it])
-                            }, color = Color.Black
+                            },
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium
                     )
             }
         }

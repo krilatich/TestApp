@@ -45,7 +45,7 @@ fun BasketScreen(navController: NavController, basketViewModel: BasketViewModel 
     val state = basketViewModel.state.value
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) },
-        topBar = { HomeTopBar() }) {
+        topBar = { HomeTopBar(date = basketViewModel.getDate()) }) {
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -79,7 +79,10 @@ fun BasketScreen(navController: NavController, basketViewModel: BasketViewModel 
                         color = MaterialTheme.colorScheme.primary
                     )
             ) {
-                Text("Оплатить " + state.totalPrice)
+                Text(
+                    "Оплатить " + state.totalPrice,
+                    style = MaterialTheme.typography.headlineSmall
+                )
             }
 
         }
@@ -143,12 +146,16 @@ fun BasketDish(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.width(100.dp)
             ) {
-                Text(dish.name)
+                Text(dish.name, style = MaterialTheme.typography.bodyMedium)
                 Row {
-                    Text(dish.price.toString() + " ₽ ")
+                    Text(
+                        dish.price.toString() + " ₽ ",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Text(
                         "· " + dish.weight.toString() + "г",
-                        color = Color.Gray
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
@@ -174,7 +181,7 @@ fun BasketDish(
                         onDecreaseButtonClick()
                     }
             )
-            Text(text = dish.count.toString())
+            Text(text = dish.count.toString(), style = MaterialTheme.typography.bodyMedium)
             Icon(
                 painter = painterResource(id = R.drawable.plus_sign),
                 contentDescription = "plus",

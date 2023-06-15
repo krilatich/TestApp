@@ -17,7 +17,6 @@ import androidx.core.view.WindowCompat
 import com.example.testapp.presentation.theme.Blue80
 import com.example.testapp.presentation.theme.Pink40
 import com.example.testapp.presentation.theme.Pink80
-import com.example.testapp.presentation.theme.Typography
 import com.example.testapp.presentation.theme.cardBackground
 
 private val DarkColorScheme = darkColorScheme(

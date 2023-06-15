@@ -8,6 +8,7 @@ import com.example.domain.models.Resource
 import com.example.domain.usecase.GetCategoriesUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.Calendar
 
 
 class HomeViewModel(
@@ -34,10 +35,34 @@ class HomeViewModel(
                         error = result.message ?: "An unexpected error occured"
                     )
                 }
+
                 is Resource.Loading -> {
                     _state.value = HomeState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getDate(): String {
+        val calendar = Calendar.getInstance()
+        val rusMonth =
+            when (calendar.get(Calendar.MONTH)) {
+                0 -> "Января"
+                1 -> "Февраля"
+                2 -> "Марта"
+                3 -> "Апреля"
+                4 -> "Мая"
+                5 -> "Июня"
+                6 -> "Июля"
+                7 -> "Августа"
+                8 -> "Сентября"
+                9 -> "Октября"
+                10 -> "Ноября"
+                11 -> "Декабря"
+                else -> {
+                    "Undefined"
+                }
+            }
+        return "${calendar.get(Calendar.DAY_OF_MONTH)} ${rusMonth}, ${calendar.get(Calendar.YEAR)}"
     }
 }

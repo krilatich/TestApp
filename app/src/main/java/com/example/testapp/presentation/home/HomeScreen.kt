@@ -39,7 +39,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
     val state = homeViewModel.state.value
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) },
-        topBar = { HomeTopBar() }) {
+        topBar = { HomeTopBar(date = homeViewModel.getDate()) }) {
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -101,7 +101,7 @@ fun Category(category: Category, onClick: () -> Unit) {
             )
             Text(
                 text = category.name,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(20.dp)

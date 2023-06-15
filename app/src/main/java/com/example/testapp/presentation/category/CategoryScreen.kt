@@ -181,15 +181,22 @@ fun DishDialog(
                             .align(Alignment.Center)
                     )
                 }
-                Text(dish.name)
+                Text(
+                    dish.name,
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Row {
-                    Text(dish.price.toString() + " ₽ ")
+                    Text(
+                        dish.price.toString() + " ₽ ",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Text(
                         "· " + dish.weight.toString() + "г",
-                        color = Color.Gray
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                Text(dish.description, style = MaterialTheme.typography.bodySmall)
+                Text(dish.description, style = MaterialTheme.typography.bodyMedium)
                 Button(
                     onClick = {
                         if (!isAdded)
@@ -201,9 +208,16 @@ fun DishDialog(
                     shape = RoundedCornerShape(10.dp),
                 ) {
                     if (isAdded)
-                        Text("Добавлено в корзину", color = Color.Green)
+                        Text(
+                            "Добавлено в корзину",
+                            color = Color.Green,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                     else
-                        Text("Добавить в корзину")
+                        Text(
+                            "Добавить в корзину",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                 }
             }
             Row(

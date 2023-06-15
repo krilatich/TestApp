@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 
 class BasketViewModel(
@@ -46,7 +47,7 @@ class BasketViewModel(
             totalPrice += dish.price * dish.count
         }
         _state.value = _state.value.copy(
-            totalPrice = totalPrice.toString() + " ₽"
+            totalPrice = "$totalPrice ₽"
         )
     }
 
@@ -65,5 +66,28 @@ class BasketViewModel(
                 updateAmountDishUseCase(dish.copy(count = dish.count - 1))
             getDishes()
         }
+    }
+
+    fun getDate(): String {
+        val calendar = Calendar.getInstance()
+        val rusMonth =
+            when (calendar.get(Calendar.MONTH)) {
+                0 -> "Января"
+                1 -> "Февраля"
+                2 -> "Марта"
+                3 -> "Апреля"
+                4 -> "Мая"
+                5 -> "Июня"
+                6 -> "Июля"
+                7 -> "Августа"
+                8 -> "Сентября"
+                9 -> "Октября"
+                10 -> "Ноября"
+                11 -> "Декабря"
+                else -> {
+                    "Undefined"
+                }
+            }
+        return "${calendar.get(Calendar.DAY_OF_MONTH)} ${rusMonth}, ${calendar.get(Calendar.YEAR)}"
     }
 }

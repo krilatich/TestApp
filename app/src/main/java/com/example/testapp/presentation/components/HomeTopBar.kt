@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.testapp.R
 
 @Composable
-fun HomeTopBar() {
+fun HomeTopBar(date: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -35,9 +35,12 @@ fun HomeTopBar() {
                 contentDescription = "location",
             )
             Column() {
-                Text("Томск", style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "14 июня, 2023",
+                    text = "Томск",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = date,
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodyMedium
                 )
